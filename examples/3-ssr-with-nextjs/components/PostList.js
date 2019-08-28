@@ -2,6 +2,7 @@ import { useQuery } from 'urql';
 import gql from 'graphql-tag';
 import ErrorMessage from './ErrorMessage';
 import PostUpvoter from './PostUpvoter';
+import Post from './Post';
 
 const allPostsQuery = gql`
   query allPosts($first: Int!, $skip: Int!) {
@@ -27,6 +28,7 @@ export default function PostList() {
   const [allPostsResult] = useQuery({
     query: allPostsQuery,
     variables: allPostsQueryVars,
+    requestPolicy: 'cache-and-network'
   });
 
   if (allPostsResult.error) {
@@ -40,15 +42,7 @@ export default function PostList() {
   return (
     <section>
       <ul>
-        {allPosts.map((post, index) => (
-          <li key={post.id}>
-            <div>
-              <span>{index + 1}. </span>
-              <a href={post.url}>{post.title}</a>
-              <PostUpvoter id={post.id} votes={post.votes} />
-            </div>
-          </li>
-        ))}
+        <Post data={allPosts} />
       </ul>
 
       <style jsx>{`
